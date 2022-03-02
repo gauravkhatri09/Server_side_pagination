@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>server_Side_pagination</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .buttons {
+            width: 50px;
+            height: 30px;
+            margin-left: 640px;
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .table_manager {
+            width: 100%;
+        }
+
+        tr :hover {
+            background-color: rgb(80, 117, 14);
+
+        }
+
+        table {
+            outline-style: outset;
+            outline-width: 15px;
+            outline-color: firebrick;
+
+        }
+
+        h1 {
+            background-color: aquamarine;
+            width: 350px;
+        }
+
+        th {
+            font-size: 24px;
+        }
+
+        #pre,
+        #nxt {
+            background-color: rgb(3, 3, 235);
+            width: 70px;
+            height: 40px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        tbody {
+            font-size: 24px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <marquee scrollAmount="10">
+        <h1>Synsoft Employee Details</h1>
+    </marquee>
+    <table id="example" class="table_manager" style="background-color: cornsilk; color: black;" border="1"
+        align="center">
+        <thead>
+            <tr>
+                <th>UserID</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>User Name</th>
+            </tr>
+        </thead>
+        <tbody id="body" align="center"></tbody>
+        <tfoot>
+            <tr>
+                <th>UserID</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>User Name</th>
+            </tr>
+        </tfoot>
+    </table><br><br>
+
+    <div class="buttons">
+        <button id="pre" onclick="myFun(index-1)"> << </button>&nbsp;&nbsp;
+        <button id="nxt" onclick="myFun(index+1)">>></button>
+    </div>
+    <script>
+        let pageNumber = 1
+        dataTable()
+
+        var index = 1;
+        var maximum = ""
+        $('#nxt').click(function (page) {
+            maximum = Math.floor(77 / 10)
+            return index < maximum ? index+=1 : index
+        })
+        $('#pre').click(function (page) {
+            return index > 2 ? index-=1 : index
+        })
+
+        function myFun(page) {
+            pageNumber = page
+            $('#body').empty();
+            dataTable();
+        }
+        
+
+        function dataTable() {
+            fetch("http://192.168.0.67/NetCoreAPI/api/home/users?pageNo=" + pageNumber + "&pageSize=" + 10, {
+                headers: {
+                    Authorization: 'Bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZjIzOTFiYi03ZDEwLTRlMTAtYjU2OC1lN2MxYzVjM2I3OTciLCJ1c2VyIjoie1widXNlcklEXCI6MzYsXCJuYW1lXCI6XCJNYW5valwifSIsIm5iZiI6MTY0NjE5ODA0OSwiZXhwIjoxNjQ2Mjg0NDQ5LCJpYXQiOjE2NDYxOTgwNDl9.NhVxrK78ThyZSUDRgxv0CHdXtBXTSAXYkcgWSll8Bes",
+                }
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data.data.users)
+                    data.data.users.map((user) => {
+                        $("#body").append(`
+                        
+                    <tr>
+                        <td>${user.userID}</td>
+                        <td>${user.firstName}</td>
+                        <td>${user.lastName}</td>
+                        <td>${user.mobileNo}</td>
+                        <td>${user.emailID}</td>
+                        <td>${user.userName}</td>
+                        </tr>
+                   `)
+
+                    });
+                })
+        }
+    </script>
+</body>
+
+</html>
